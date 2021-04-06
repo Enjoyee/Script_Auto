@@ -1,0 +1,37 @@
+
+# 快手视频刷金币测试，抓包获取secrets
+
+name: 快手视频签到
+
+on:
+  #push:
+        #branches:
+            #- main
+  schedule:
+     - cron: '*/30 0,2,4,6,8,10,12 * * *'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    env:
+        KS_TOKEN: ${{ secrets.KS_TOKEN }}
+        TZ: Asia/shanghai
+    steps:
+      - name: Checkout
+        run: |
+          git clone https://github.com/Enjoyee/Script_Auto.git ~/AutoScripts
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: npm install
+        run: |
+          cd ~/Scripts
+          npm install
+      - name: '运行 【快手签到】'
+        if: env.KS_TOKEN
+        run: |
+          cd ~/AutoScripts
+          node kuaishou/kuaishou.js
+        env:
+          PUSH_KEY: ${{ secrets.PUSH_KEY }}
